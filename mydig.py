@@ -19,7 +19,10 @@ def dns_lookup(site):
                 next_location = entry[-1]
                 break
         if next_location == "":
-            return -1
+            # can't find a IPv4 address in additional
+            server = str(query.authority[0]).split()
+            _, address = dns_lookup(server[-1])
+            next_location = str(address[0]).split()[-1]
         query = dns.query.udp(message, next_location)
         
     answers = query.answer
