@@ -21,7 +21,14 @@ def dns_lookup(site):
         if next_location == "":
             return -1
         query = dns.query.udp(message, next_location)
-    return query
+        
+    answers = query.answer
+    answer = str(query.answer[0]).split()
+    if answer[-2] != 'A':
+        _, additional_answers = dns_lookup(answer[-1])
+        answers += additional_answers # list
+
+    return message.question[0], answers
 
 
 if __name__ == '__main__':
@@ -30,9 +37,10 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         site = sys.argv[1]
         start = time.time()
-        result = dns_lookup(site)
+        question, answers = dns_lookup(site)
         end = time.time()
-        print(f"QUESTION SECTION: \n{result.question[0]}\n")
-        print(f"ANSWER SECTION: \n{result.answer[0]}\n")
+        answers = '\n'.join([str(entry) for entry in answers])
+        print(f"QUESTION SECTION: \n{question}\n")
+        print(f"ANSWER SECTION: \n{answers}\n")
         print(f"Query time: {end-start:.2}")
         print(f"WHEN: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())}")
