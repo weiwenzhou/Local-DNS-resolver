@@ -45,5 +45,5 @@ if __name__ == '__main__':
         answers = '\n'.join([str(entry) for entry in answers])
         print(f"QUESTION SECTION: \n{question}\n")
         print(f"ANSWER SECTION: \n{answers}\n")
-        print(f"Query time: {end-start:.2}")
+        print(f"Query time: {int(1000*(end-start))} msec")
         print(f"WHEN: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())}")
