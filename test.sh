@@ -12,7 +12,7 @@ fi
 
 for web in "${arr[@]}"
 do
-    echo $web > result/$web.csv
+    echo "$web,$web,$web" > result/$web.csv
     for t in {1..10}
     do  
         for (( i=1; i<${arraylength}+1; i++ ));
@@ -26,3 +26,5 @@ do
         echo '' >> result/$web.csv
     done
 done
+# combined the results
+paste -d, result/*.csv | sed 's/^,//; s/,$//' > combined.csv
