@@ -7,7 +7,7 @@ SITE = "www.cnn.com"
 def dns_lookup(site):
     message = dns.message.make_query(site, 'A')
     # contact the root server
-    query = dns.query.udp(message, ROOT_IP_A)
+    query = dns.query.udp(message, ROOT_IP_A, timeout=1)
     # if there are no answers keep querying
     while len(query.answer) == 0:
         # get the next server to query
@@ -23,7 +23,7 @@ def dns_lookup(site):
             server = str(query.authority[0]).split()
             _, address = dns_lookup(server[-1])
             next_location = str(address[0]).split()[-1]
-        query = dns.query.udp(message, next_location)
+        query = dns.query.udp(message, next_location, timeout=1)
         
     answers = query.answer
     answer = str(query.answer[0]).split()
@@ -40,7 +40,13 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         site = sys.argv[1]
         start = time.time()
-        question, answers = dns_lookup(site)
+        done = True
+        while done:
+            try:
+                question, answers = dns_lookup(site)
+                done = False
+            except:
+                print(f"Exception. Trying again. Ctrl+C if error persists.")
         end = time.time()
         answers = '\n'.join([str(entry) for entry in answers])
         print(f"QUESTION SECTION: \n{question}\n")
